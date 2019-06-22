@@ -24,28 +24,32 @@ public sealed class Outline : PostProcessEffectSettings
 
     // The objects to add outlines too
     [NonSerialized]
-    public readonly Dictionary<GameObject, List<Renderer>> ObjectRenderers = new Dictionary<GameObject, List<Renderer>>();
+    public readonly ParameterOverride<Dictionary<GameObject, List<Renderer>>> ObjectRenderers = new ParameterOverride<Dictionary<GameObject, List<Renderer>>>
+    {
+        overrideState = true,
+        value = new Dictionary<GameObject, List<Renderer>>()
+    };
 
     public void AddRenderers(GameObject go)
     {
         var list = new List<Renderer>();
         go.GetComponentsInChildren(true, list);
-        ObjectRenderers.Add(go, list);
+        ObjectRenderers.value.Add(go, list);
     }
 
     public void RemoveRenderers(GameObject go)
     {
-        ObjectRenderers.Remove(go);
+        ObjectRenderers.value.Remove(go);
     }
 
     public void ClearOutlineData()
     {
-        ObjectRenderers.Clear();
+        ObjectRenderers.value.Clear();
     }
 
     public override bool IsEnabledAndSupported(PostProcessRenderContext context)
     {
-        return ObjectRenderers.Any() && base.IsEnabledAndSupported(context);
+        return ObjectRenderers.value.Any() && base.IsEnabledAndSupported(context);
     }
 }
 
@@ -87,7 +91,7 @@ public sealed class OutlineRenderer : PostProcessEffectRenderer<Outline>
 
         // render selected objects into a mask buffer, with different colors for visible vs occluded ones 
         float id = 0f;
-        foreach (var collection in settings.ObjectRenderers)
+        foreach (var collection in settings.ObjectRenderers.value)
         {
             id += 0.25f;
             cmd.SetGlobalFloat("_ObjectId", id);
@@ -130,7 +134,7 @@ public sealed class OutlineRenderer : PostProcessEffectRenderer<Outline>
 
 
         // final overlay
-        cmd.SetGlobalColor("_OutlineColor", settings.OutlineColor);
+        cmd.SetGlobalColor("_OutlineColor", settings.OutlineColor.value);
 
         cmd.BlitFullscreenTriangle(context.source, context.destination);
         cmd.Blit(_blurredRTID, context.destination, _outlineMaterial, 4);
