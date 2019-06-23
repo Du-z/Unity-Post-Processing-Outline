@@ -42,7 +42,7 @@ public sealed class Outline : PostProcessEffectSettings
         ObjectRenderers.value.Remove(go);
     }
 
-    public void ClearOutlineData()
+    public void ClearRenderers()
     {
         ObjectRenderers.value.Clear();
     }
