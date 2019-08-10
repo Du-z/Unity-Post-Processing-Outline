@@ -30,11 +30,25 @@ public sealed class Outline : PostProcessEffectSettings
         value = new Dictionary<GameObject, List<Renderer>>()
     };
 
+    public void ReplaceRenderers(IEnumerable<GameObject> gos)
+    {
+        ClearRenderers();
+        AddRenderers(gos);
+    }
+
+    public void AddRenderers(IEnumerable<GameObject> gos)
+    {
+        foreach (var go in gos)
+        {
+            AddRenderers(go);
+        }
+    }
+
     public void AddRenderers(GameObject go)
     {
         var list = new List<Renderer>();
         go.GetComponentsInChildren(true, list);
-        ObjectRenderers.value.Add(go, list);
+        ObjectRenderers.value[go] = list;
     }
 
     public void RemoveRenderers(GameObject go)
