@@ -51,6 +51,14 @@ public sealed class Outline : PostProcessEffectSettings
         ObjectRenderers.value[go] = list;
     }
 
+    public void RemoveRenderers(IEnumerable<GameObject> gos)
+    {
+        foreach (var go in gos)
+        {
+            RemoveRenderers(go);
+        }
+    }
+
     public void RemoveRenderers(GameObject go)
     {
         ObjectRenderers.value.Remove(go);
